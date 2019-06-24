@@ -29,7 +29,7 @@ module Seedster
 
       # TODO: mock Rails.root here for test
       def seed_file_dir
-        Rails.root.join(TMP, SEED_FILE_DIR)
+        Rails.root.join(TMP_DIR, SEED_FILE_DIR)
       end
 
       def get_filename(table_name:)
