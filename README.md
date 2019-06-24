@@ -139,6 +139,18 @@ Run the test suite with `rake test`.
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/groupon/seedster. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
+## Releasing a new version
+
+1. Update the version in `seedster.gemspec`
+2. `git commit seedster.gemspec` with the following message format:
+
+        Version x.x.x
+
+        Changelog:
+        * Some new feature
+        * Some new bug fix
+3. `rake release`
+
 ## License
 
 The gem is available as open source under the terms of the [APACHE LICENSE, VERSION 2.0](https://www.apache.org/licenses/LICENSE-2.0).
