@@ -36,7 +36,8 @@ namespace :seedster do
     Seedster::DataLoader.new(
       local_db_name: config['development']['database'],
       ssh_user: Seedster.configuration.ssh_user,
-      ssh_host: Seedster.configuration.dump_host
+      ssh_host: Seedster.configuration.dump_host,
+      remote_host_path: Seedster.configuration.remote_host_path
     ).load!
   end
 end
