@@ -46,9 +46,10 @@ dev_shell> rake seedster:load
 * [Installation](#installation)
 * [Initializer](#initializer)
 * [Configuration Options](#configuration-options)
-* [Development](#development)
+* [Seedster Development](#seedster-development)
  	* [Testing](#testing)
 	* [Contributing](#contributing)
+	* [Releasing a new version](#releasing-a-new-version)
 	* [License](#contributing)
 	* [Code of Conduct](#code-of-conduct)
 
