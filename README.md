@@ -41,8 +41,18 @@ To download, extract, and load the data file:
 dev_shell> rake seedster:load
 ```
 
+## Table of Contents
 
-## Installation
+* [Installation](#installation)
+* [Initializer](#initializer)
+* [Configuration Options](#configuration-options)
+* [Development](#development)
+ 	* [Testing](#testing)
+	* [Contributing](#contributing)
+	* [License](#contributing)
+	* [Code of Conduct](#code-of-conduct)
+
+### Installation
 
 ```ruby
 gem 'seedster'
@@ -56,7 +66,7 @@ Or install it yourself as:
 
     $ gem install seedster
 
-## Initializer
+### Initializer
 
 An initializer is required to make Seedster work with your hosts, database, ssh config, and really drives everything that is unique to your application.
 
@@ -85,7 +95,7 @@ end
 ```
 
 
-### Initializer config options
+### Configuration Options
 
 ##### `db_host`
 
@@ -127,19 +137,19 @@ The tables option is where each query is stored. This is currently an array of h
 
 
 
-## Development
+## Seedster Development
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
-## Testing
+### Testing
 
 Run the test suite with `rake test`.
 
-## Contributing
+### Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/groupon/seedster. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
-## Releasing a new version
+### Releasing a new version
 
 1. Update the version in `seedster.gemspec`
 2. `git commit seedster.gemspec` with the following message format:
@@ -151,10 +161,10 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/groupo
         * Some new bug fix
 3. `rake release`
 
-## License
+### License
 
 The gem is available as open source under the terms of the [APACHE LICENSE, VERSION 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 
-## Code of Conduct
+### Code of Conduct
 
 Everyone interacting in the Seedster project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/groupon/seedster/blob/master/CODE_OF_CONDUCT.md).
