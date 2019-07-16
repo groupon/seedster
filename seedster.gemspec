@@ -10,8 +10,8 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{Work with real content in development}
   spec.description   = %q{Easily load real application content for local development}
-  spec.homepage      = ""
-  spec.license       = "Apache2"
+  spec.homepage      = "https://github.com/groupon/seedster"
+  spec.license       = "Apache-2.0"
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features)/})
   end

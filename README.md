@@ -71,7 +71,13 @@ Or install it yourself as:
 
 An initializer is required to make Seedster work with your hosts, database, ssh config, and really drives everything that is unique to your application.
 
-Create a file `config/initializers/seedster.rb` with content like this:
+The gem provides an initializer. Run:
+
+`rails generate seedster:initializer`
+
+This will create a file `config/initializers/seedster.rb` where you can begin putting in values for your application. The configuration is both for DB credentials, SSH credentials, but also the configuration of the tables you wish to dump.
+
+The initializer looks like this:
 
 ```ruby
 Seedster.configure do |c|
