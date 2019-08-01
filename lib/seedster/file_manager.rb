@@ -24,11 +24,11 @@ module Seedster
       def dump_dir
         # Capistrano note:
         # set up as a linked_dir in config/deploy.rb
-        File.join(TMP_DIR, DATA_DUMPS_DIR)
+        Rails.root.join(TMP_DIR, DATA_DUMPS_DIR)
       end
 
       def seed_file_dir
-        File.join(TMP_DIR, SEED_FILE_DIR)
+        Rails.root.join(TMP_DIR, SEED_FILE_DIR)
       end
 
       def get_filename(table_name:)

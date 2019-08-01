@@ -58,7 +58,7 @@ module Seedster
 
     def sql_results_to_file(sql:, table_name:)
       filename = FileManager.get_filename(table_name: table_name)
-      puts "dumping '#{table_name}' to '#{filename}' with query '#{sql}'"
+      puts "Dumping '#{table_name}' to '#{filename}' with query '#{sql}'"
       psql_cmd = %{PGPASSWORD=#{db_password} psql -h #{db_host} -d #{db_name} -U #{db_username} -c "\\copy (#{sql}) TO '#{filename}' WITH CSV"}
       system(psql_cmd)
     end

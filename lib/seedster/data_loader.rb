@@ -25,11 +25,10 @@ module Seedster
       @local_db_name = local_db_name
       @remote_host_path = remote_host_path
       print_greeting
-      FileManager.create_seed_file_dir
     end
 
     def load!
-      download_and_extract_file
+      download_and_extract_file unless Seedster.configuration.skip_download
 
       Seedster.configuration.tables.each do |item|
         load_data(table_name: item[:name])
@@ -46,14 +45,14 @@ module Seedster
       system(scp_command)
 
       untar_command = "tar -zxvf #{FileManager.dump_file_name} -C #{FileManager.seed_file_dir}"
-      puts "Extracting local file: #{untar_command}"
+      puts "Extracting file: #{untar_command}"
       system(untar_command)
     end
 
     def load_data(table_name:)
       filename = FileManager.get_filename(table_name: table_name)
       load_command = "COPY #{table_name} FROM '#{filename}' DELIMITERS ',' CSV"
-      puts "loading '#{table_name}' from '#{filename}'"
+      puts "Loading '#{table_name}' from '#{filename}'"
       psql_cmd = %{psql -d '#{local_db_name}' -c "#{load_command}"}
       system(psql_cmd)
     end
@@ -61,10 +60,14 @@ module Seedster
     def print_greeting
       puts
       puts "🌱🌱🌱🌱🌱"
-      puts "Hello from Seedster!"
+      puts "Hello from Seedster. A note:"
       puts
-      puts "Loading data requires a compatible schema version, and empty tables."
-      puts "Before loading data locally, truncate the relevant tables (or you may see constraint errors)."
+      puts "`rake seedster:load` expects a compatible schema version and empty tables."
+      puts "Run `rake db:reset` prior to running `rake seedster:load`"
+      puts
+      puts "Before loading data locally, truncate the relevant tables (or you may see constraint violation errors)."
+      puts "Bugs and issues: https://github.com/groupon/seedster"
+      puts "Thanks!"
       puts "🌱🌱🌱🌱🌱"
       puts
     end

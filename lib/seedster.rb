@@ -36,7 +36,8 @@ module Seedster
       :query_params,
       :ssh_user,
       :dump_host,
-      :tables
+      :tables,
+      :skip_download
 
     def initialize
       @db_host = nil
@@ -48,6 +49,7 @@ module Seedster
       @ssh_user = nil
       @dump_host = nil
       @tables = []
+      @skip_download = false
     end
   end
 end
