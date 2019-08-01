@@ -23,6 +23,7 @@ module Seedster
       @db_host = db_host
       @db_username = db_username
       @db_name = db_name
+      FileManager.create_dump_dir
       FileManager.create_seed_file_dir
     end
 

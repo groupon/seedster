@@ -27,9 +27,8 @@ module Seedster
         File.join(TMP_DIR, DATA_DUMPS_DIR)
       end
 
-      # TODO: mock Rails.root here for test
       def seed_file_dir
-        Rails.root.join(TMP_DIR, SEED_FILE_DIR)
+        File.join(TMP_DIR, SEED_FILE_DIR)
       end
 
       def get_filename(table_name:)
@@ -40,8 +39,13 @@ module Seedster
         "#{SEEDSTER}-dump-latest.tar.gz"
       end
 
+      def create_dump_dir
+        puts "Creating directory: '#{FileManager.dump_dir}'"
+        FileUtils.mkdir_p(dump_dir)
+      end
+
       def create_seed_file_dir
-        puts "Setting up '#{FileManager.seed_file_dir}' directory"
+        puts "Creating directory: '#{FileManager.seed_file_dir}'"
         FileUtils.mkdir_p(seed_file_dir)
       end
     end
