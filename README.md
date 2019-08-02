@@ -4,19 +4,19 @@ Seedster is a way to work with real content in a development database, for a Rai
 
 > Why not use the built-in Rails seed mechanism?
 
-We preferred a custom solution so that the development data was based on real production data, with referential integrity intact. What we settled on was exporting particular rows of data all driven from a specific user, to provide a meaningful set of related data that could periodically be refreshed with minimal effort over time.
+We preferred a custom solution so that the development data was based on real production data, with referential integrity intact. What we settled on was exporting particular rows of data for a specific user, to provide a meaningful set of their data that could periodically be refreshed and added to with minimal effort.
 
-> Briefly, how is it different from Rails' db seeds?
+> How is it different from Rails' db seeds?
 
-With Seedster, you write SQL queries for the tables you want data from. The queries can have a parameter like a user ID. A Rake task is provided to dump data from a production database, and a separate task is provided to load data locally on developers machines.
+With Seedster, you write SQL queries for the tables you want data from. The queries can have a parameter like a `user_id`. A Rake task is provided to dump data from a production database, and a separate task is provided to load data locally on developers machines.
 
 > This works with real user data?
 
-Seedster uses content from a real user, so the recommendation is to use an employee user, test user, or something along those lines, so that the content being used for development is appropriate to share on a development team. Dump files can be viewed by all team members, to ensure they are based on an agreed upon user's data.
+Seedster uses content from a real user, so the recommendation is to use an employee user, test user, or something along those lines, so that the content being used for development is appropriate to share on a development team. Dump files can be viewed by all team members, to ensure they are based on an agreed upon user's data. At this time the dump file is not encrypted although that could be added.
 
 > What are the dependencies?
 
-Seedster has developed for use with a Postgres database and depends on `psql`, `ssh`, `scp`, and `tar`.
+Seedster was developed for use with a Rails application, using PostgreSQL database and depends on `psql`, `ssh`, `scp`, and `tar` commands.
 
 
 ## Process Overview
@@ -25,20 +25,20 @@ Requirements and expectations:
 
  * Local and remote database schema versions are in same. The development database is empty prior to load.
  * Use the provided Rake task to dump data from production. `rake seedster:dump` Individual dump files are consolidated into a single tar file.
- * Use the provided Rake task to download data file (`rake seedster:load`) to download, extract, and load the data
- * Use ENV variables to pass in dynamic data to SQL queries responsible for selecting data, for example supply `USER_ID` with a value on the command line, and add a parameter to your SQL query with syntax like this `%{}`, for example: `SELECT * FROM users WHERE id = '%{user_id}'`.
+ * Use the provided Rake task to download the data file (`rake seedster:load`) to download, extract, and load the data. NEW: Use the `skip_download` option if you wish to load from a local data file.
+ * Use `ENV` variables to pass in dynamic data to SQL queries responsible for selecting data, for example supply `USER_ID` with a value on the command line, and add a parameter to your SQL query with syntax like this `%{}`, for example: `SELECT * FROM users WHERE id = '%{user_id}'`.
 
 
 In order to dump the data for user ID 1, using a parameterized SQL query that expects a value for `user_id`:
 
-```
-prod_shell> USER_ID=1 rake seedster:dump
+```sh
+$ rake seedster:dump USER_ID=1
 ```
 
 To download, extract, and load the data file:
 
-```
-dev_shell> rake seedster:load
+```sh
+$ rake seedster:load
 ```
 
 ## Table of Contents
@@ -77,59 +77,24 @@ The gem provides an initializer. Run:
 
 This will create a file `config/initializers/seedster.rb` where you can begin putting in values for your application. The configuration is both for DB credentials, SSH credentials, but also the configuration of the tables you wish to dump.
 
-The initializer looks like this:
-
-```ruby
-Seedster.configure do |c|
-  c.db_host = 'host.com' # DB host. Fill this in, or reference Rails config/development.yml database values or ar-octopus config
-  c.db_name = 'db_nameXXX'
-  c.db_username = 'db_usernameXXX'
-  c.db_password = 'passwordXXX'
-  c.remote_host_path = "/var/company/www/app/current" # where the root of the app is deployed on the host
-  c.query_params = { } # pass in values to interpolate into queries,
-                       # e.g. USER_ID=XXX would be {user_id: ENV['USER_ID']}
-
-  c.ssh_user = 'ssh_userXXX' # which user will connect to the host
-  c.dump_host = 'app.host.com' # host where app is deployed
-
-  #
-  # Help:
-  # Comma-separated list of hashes, with keys `query` and `name`, one hash per DB table
-  #
-  # Keys:
-  # query: the SQL query for the table to be dumped. Add a parameter like `user_id` to be passed in.
-  # name: the name of the database table
-  #
-  c.tables = [
-    # BEGIN example ---
-    # {
-    #   query: %{SELECT u.* FROM users
-    #       where u.id = '%{user_id}'},
-    #   name: 'users'
-    # }
-    # END example -----
-  ]
-end
-```
-
 
 ### Configuration Options
 
-##### `db_host`
+##### `dump_host` and `load_host`
 
-Production database host. We use a read-only replica
+These are both configured to read your Rails database configuration for defaults to get started. However the intention is the dump host is specified to be a Production host, and the load host is the Development host (or Staging etc.).
 
-##### `db_name`
+##### `dump_database` and `load_database`
 
-Production database name
+Database name
 
-##### `db_username`
+##### `dump_username` and `load_username`
 
-Production database username 
+Database connection username 
 
-##### `db_password`
+##### `dump_password` and `load_password`
 
-Production database password
+Database connection password
 
 ##### `remote_host_path`
 
@@ -143,15 +108,19 @@ To use a parameter like `user_id` in SQL queries, passing the value in via an en
 
 An SSH user that can connect (for purposes of downloading the file with `scp`) to the host where the production dump is.
 
-##### `dump_host`
+##### `ssh_host`
 
-The host (a hostname) where the dump file is stored. We made this configurable to be able to dump data from production and staging.
+The SSH host (a hostname) where the dump file is stored. We made this configurable to be able to dump data from production and staging.
 
 ##### `tables`
 
-e.g. `tables = [ /* {name: '', query: '' } */ ]`
+e.g. `tables = [ {name: '', query: '' } ]`
     
-The tables option is where each query is stored. This is currently an array of hashes, with two items, `name` and `query`. `name` is the name of the database table, and `query` is the SQL query. We are dumping 10-15 tables worth of data for the same user, so that means we have 10-15 items specified here. This is where we would modify those queries over time to include or exclude more tables or fields of data.
+The tables option is where each table being dumped is configured. This is currently an array of hashes, with two items, `name` and `query`. `name` is the name of the database table, and `query` is the SQL query.
+
+We are dumping 10-15 tables worth of data for the same user, so that means we have 10-15 hashes in this array.
+
+This is where we would modify those queries over time to include or exclude more tables or fields of data.
 
 
 
