@@ -14,5 +14,5 @@
 # limitations under the License.
 #
 module Seedster
-  VERSION = '0.1.5'
+  VERSION = '0.1.6'
 end

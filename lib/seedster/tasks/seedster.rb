@@ -21,22 +21,27 @@ namespace :seedster do
     puts "Seedster loading..."
 
     Seedster::DataDumper.new(
-      db_host: Seedster.configuration.db_host,
-      db_name: Seedster.configuration.db_name,
-      db_username: Seedster.configuration.db_username,
-      db_password: Seedster.configuration.db_password
+      dump_host: Seedster.configuration.dump_host,
+      dump_database: Seedster.configuration.dump_database,
+      dump_username: Seedster.configuration.dump_username,
+      dump_password: Seedster.configuration.dump_password
     ).dump!
   end
 
   desc "Load application seed data from a remote dump file"
   task load: :environment do
-    return unless Rails.env.development? # only load in dev environment
+    if !Rails.env.development?
+      puts "Exiting. Seedster Data Load is intended for development only."
+      return
+    end
 
-    config = Rails.configuration.database_configuration
     Seedster::DataLoader.new(
-      local_db_name: config['development']['database'],
+      load_host: Seedster.configuration.load_host,
+      load_database: Seedster.configuration.load_database,
+      load_username: Seedster.configuration.load_username,
+      load_password: Seedster.configuration.load_password,
       ssh_user: Seedster.configuration.ssh_user,
-      ssh_host: Seedster.configuration.dump_host,
+      ssh_host: Seedster.configuration.ssh_host,
       remote_host_path: Seedster.configuration.remote_host_path
     ).load!
   end

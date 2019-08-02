@@ -15,14 +15,13 @@
 #
 module Seedster
   class DataDumper
-    attr_accessor :db_password
-    attr_reader :db_host, :db_username, :db_name
+    attr_reader :dump_password, :dump_host, :dump_username, :dump_database
 
-    def initialize(db_password:, db_host:, db_username:, db_name:)
-      @db_password = db_password
-      @db_host = db_host
-      @db_username = db_username
-      @db_name = db_name
+    def initialize(dump_password:, dump_host:, dump_username:, dump_database:)
+      @dump_password  = dump_password
+      @dump_host      = dump_host
+      @dump_username  = dump_username
+      @dump_database  = dump_database
       FileManager.create_dump_dir
       FileManager.create_seed_file_dir
     end
@@ -53,13 +52,14 @@ module Seedster
       dump_file = Rails.root.join(FileManager.dump_dir, FileManager.dump_file_name)
       puts "Creating dump file '#{dump_file}' from '#{FileManager.seed_file_dir}'"
       tar_command = "tar -zcvf #{dump_file} -C #{FileManager.seed_file_dir} ." # use relative paths
-      system(tar_command) # use relative paths
+      puts "Running tar command: '#{tar_command}'"
+      system(tar_command)
     end
 
     def sql_results_to_file(sql:, table_name:)
       filename = FileManager.get_filename(table_name: table_name)
-      puts "Dumping '#{table_name}' to '#{filename}' with query '#{sql}'"
-      psql_cmd = %{PGPASSWORD=#{db_password} psql -h #{db_host} -d #{db_name} -U #{db_username} -c "\\copy (#{sql}) TO '#{filename}' WITH CSV"}
+      puts "Dumping table '#{table_name}' to file '#{filename}' with query '#{sql}'"
+      psql_cmd = %{PGPASSWORD=#{dump_password} psql -h #{dump_host} -d #{dump_database} -U #{dump_username} -c "\\copy (#{sql}) TO '#{filename}' WITH CSV"}
       system(psql_cmd)
     end
   end

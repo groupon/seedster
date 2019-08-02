@@ -30,24 +30,30 @@ module Seedster
   end
 
   class Configuration
-    attr_accessor :db_host, :db_name,
-      :db_username, :db_password,
+    attr_accessor :dump_host, :dump_database,
+      :dump_username, :dump_password,
+      :load_host, :load_database,
+      :load_username, :load_password,
       :remote_host_path,
       :query_params,
       :ssh_user,
-      :dump_host,
+      :ssh_host,
       :tables,
       :skip_download
 
     def initialize
-      @db_host = nil
-      @db_name = nil
-      @db_username = nil
-      @db_password = nil
+      @dump_host = nil
+      @dump_database = nil
+      @dump_username = nil
+      @dump_password = nil
+      @load_host = nil
+      @load_database = nil
+      @load_username = nil
+      @load_password = nil
       @remote_host_path = nil
       @query_params = {}
       @ssh_user = nil
-      @dump_host = nil
+      @ssh_host= nil
       @tables = []
       @skip_download = false
     end

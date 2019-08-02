@@ -15,15 +15,18 @@
 #
 module Seedster
   class DataLoader
-    attr_reader :ssh_user, :ssh_host, :local_db_name,
-      :remote_host_path
+    attr_reader :ssh_user, :ssh_host, :remote_host_path,
+      :load_host, :load_database, :load_username, :load_password
 
-    def initialize(ssh_user:, ssh_host:,
-                   local_db_name:, remote_host_path:)
+    def initialize(ssh_user:, ssh_host:, remote_host_path:,
+                   load_host:, load_database:, load_username:, load_password:)
       @ssh_user = ssh_user
       @ssh_host = ssh_host
-      @local_db_name = local_db_name
       @remote_host_path = remote_host_path
+      @load_host = load_host
+      @load_database = load_database
+      @load_username = load_username
+      @load_password = load_password
       print_greeting
     end
 
@@ -41,19 +44,24 @@ module Seedster
       remote_host_path = Seedster.configuration.remote_host_path
       remote_file = "#{remote_host_path}/#{File.join(FileManager.dump_dir, FileManager.dump_file_name)}"
       scp_command = "scp -r #{ssh_user}@#{ssh_host}:#{remote_file} ."
-      puts "Downloading file: #{scp_command}"
+      puts "Downloading file: '#{scp_command}'"
       system(scp_command)
 
       untar_command = "tar -zxvf #{FileManager.dump_file_name} -C #{FileManager.seed_file_dir}"
-      puts "Extracting file: #{untar_command}"
+      puts "Extracting file: '#{untar_command}'"
       system(untar_command)
     end
 
     def load_data(table_name:)
       filename = FileManager.get_filename(table_name: table_name)
+      psql_load(filename: filename, table_name: table_name)
+    end
+
+    # TODO: this could be swapped out for MySQL equivalent by a motivated individual :)
+    def psql_load(filename:, table_name:)
       load_command = "COPY #{table_name} FROM '#{filename}' DELIMITERS ',' CSV"
       puts "Loading '#{table_name}' from '#{filename}'"
-      psql_cmd = %{psql -d '#{local_db_name}' -c "#{load_command}"}
+      psql_cmd = %{PG_PASSWORD=#{load_password} psql --host #{load_host} --dbname #{load_database} --username #{load_username} -c "#{load_command}"}
       system(psql_cmd)
     end
 
