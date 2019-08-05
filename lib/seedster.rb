@@ -53,7 +53,7 @@ module Seedster
       @remote_host_path = nil
       @query_params = {}
       @ssh_user = nil
-      @ssh_host= nil
+      @ssh_host = nil
       @tables = []
       @skip_download = false
     end

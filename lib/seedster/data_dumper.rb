@@ -15,15 +15,18 @@
 #
 module Seedster
   class DataDumper
-    attr_reader :dump_password, :dump_host, :dump_username, :dump_database
+    attr_reader :dump_password, :dump_host, :dump_username, :dump_database,
+      :file_manager
 
     def initialize(dump_password:, dump_host:, dump_username:, dump_database:)
+      print_greeting
       @dump_password  = dump_password
       @dump_host      = dump_host
       @dump_username  = dump_username
       @dump_database  = dump_database
-      FileManager.create_dump_dir
-      FileManager.create_seed_file_dir
+      @file_manager = FileManager.new(app_root: Rails.root)
+      @file_manager.create_dump_dir
+      @file_manager.create_seed_file_dir
     end
 
     def dump!
@@ -49,18 +52,28 @@ module Seedster
     end
 
     def create_consolidated_dump_file
-      dump_file = Rails.root.join(FileManager.dump_dir, FileManager.dump_file_name)
-      puts "Creating dump file '#{dump_file}' from '#{FileManager.seed_file_dir}'"
-      tar_command = "tar -zcvf #{dump_file} -C #{FileManager.seed_file_dir} ." # use relative paths
+      dump_file = file_manager.consolidated_dump_file_name
+      puts "Creating dump file: '#{dump_file}' from '#{file_manager.seed_file_dir}'"
+      tar_command = "tar -zcvf #{dump_file} -C #{file_manager.seed_file_dir} ." # use relative paths
       puts "Running tar command: '#{tar_command}'"
       system(tar_command)
     end
 
     def sql_results_to_file(sql:, table_name:)
-      filename = FileManager.get_filename(table_name: table_name)
-      puts "Dumping table '#{table_name}' to file '#{filename}' with query '#{sql}'"
+      filename = file_manager.get_filename(table_name: table_name)
+      puts "Dumping table '#{table_name}' to file '#{filename}' with query --#{sql}--"
       psql_cmd = %{PGPASSWORD=#{dump_password} psql -h #{dump_host} -d #{dump_database} -U #{dump_username} -c "\\copy (#{sql}) TO '#{filename}' WITH CSV"}
       system(psql_cmd)
+    end
+
+    private
+
+    def print_greeting
+      puts
+      puts "🌱🌱🌱🌱🌱"
+      puts "SEEDSTER DUMP"
+      puts "🌱🌱🌱🌱🌱"
+      puts
     end
   end
 end

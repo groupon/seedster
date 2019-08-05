@@ -18,8 +18,6 @@ require 'seedster'
 namespace :seedster do
   desc "Dump application seed data to a data dump file"
   task dump: :environment do
-    puts "Seedster loading..."
-
     Seedster::DataDumper.new(
       dump_host: Seedster.configuration.dump_host,
       dump_database: Seedster.configuration.dump_database,

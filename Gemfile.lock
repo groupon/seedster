@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    seedster (0.1.1)
+    seedster (0.1.6)
 
 GEM
   remote: https://rubygems.org/
@@ -19,4 +19,4 @@ DEPENDENCIES
   seedster!
 
 BUNDLED WITH
-   1.16.1
+   2.0.2
