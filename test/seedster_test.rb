@@ -10,7 +10,7 @@ class SeedsterTest < Minitest::Test
 
   def test_that_it_has_a_version_number
     refute_nil ::Seedster::VERSION
-    assert_equal '0.1.6', ::Seedster::VERSION
+    assert_equal '0.1.7', ::Seedster::VERSION
   end
 
   def test_file_manager_has_a_dump_dir
