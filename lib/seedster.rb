@@ -39,7 +39,8 @@ module Seedster
       :ssh_user,
       :ssh_host,
       :tables,
-      :skip_download
+      :skip_download,
+      :disable_db_triggers
 
     def initialize
       @dump_host = nil
@@ -56,6 +57,7 @@ module Seedster
       @ssh_host = nil
       @tables = []
       @skip_download = false
+      @disable_db_triggers = false
     end
   end
 end

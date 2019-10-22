@@ -40,6 +40,9 @@ Seedster.configure do |c|
   #
   c.skip_download = false
 
+  # Set this option to true if you want to disable table triggers, e.g. foreign key constraints
+  c.disable_db_triggers = false
+
   # REMOTE data dump download options
   # NOTE: These options are ignored if `skip_download` is true
   #

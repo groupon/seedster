@@ -17,10 +17,10 @@ module Seedster
   class DataLoader
     attr_reader :ssh_user, :ssh_host, :remote_host_path,
       :load_host, :load_database, :load_username, :load_password,
-      :file_manager
+      :file_manager, :disable_triggers
 
-    def initialize(ssh_user:, ssh_host:, remote_host_path:,
-                   load_host:, load_database:, load_username:, load_password:)
+    def initialize(ssh_user:, ssh_host:, remote_host_path:, load_host:, load_database:,
+                   load_username:, load_password:, disable_triggers: false)
       @ssh_user = ssh_user
       @ssh_host = ssh_host
       @remote_host_path = remote_host_path
@@ -29,18 +29,39 @@ module Seedster
       @load_username = load_username
       @load_password = load_password
       @file_manager = FileManager.new(app_root: Rails.root)
+      @disable_triggers = disable_triggers
       print_greeting
     end
 
     def load!
       download_and_extract_file unless Seedster.configuration.skip_download
 
+      if disable_triggers
+        puts "***** Disabling triggers *****"
+        Seedster.configuration.tables.each do |item|
+          psql_cmd = "ALTER TABLE #{item[:name]} DISABLE TRIGGER ALL"
+          system(psql_cmd_pattern % psql_cmd)
+        end
+      end
+
       Seedster.configuration.tables.each do |item|
         load_data(table_name: item[:name])
+      end
+
+      if disable_triggers
+        puts "***** Enabling triggers *****"
+        Seedster.configuration.tables.each do |item|
+          psql_cmd = "ALTER TABLE #{item[:name]} ENABLE TRIGGER ALL"
+          system(psql_cmd_pattern % psql_cmd)
+        end
       end
     end
 
     private
+
+    def psql_cmd_pattern
+      %{PG_PASSWORD=#{load_password} psql --host #{load_host} --dbname #{load_database} --username #{load_username} -c "%s"}
+    end
 
     def download_and_extract_file
       remote_host_path = Seedster.configuration.remote_host_path
@@ -63,7 +84,7 @@ module Seedster
     def psql_load(filename:, table_name:)
       load_command = "COPY #{table_name} FROM '#{filename}' DELIMITERS ',' CSV"
       puts "Loading '#{table_name}' from '#{filename}'"
-      psql_cmd = %{PG_PASSWORD=#{load_password} psql --host #{load_host} --dbname #{load_database} --username #{load_username} -c "#{load_command}"}
+      psql_cmd = psql_cmd_pattern % load_command
       system(psql_cmd)
     end
 

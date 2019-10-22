@@ -40,7 +40,8 @@ namespace :seedster do
       load_password: Seedster.configuration.load_password,
       ssh_user: Seedster.configuration.ssh_user,
       ssh_host: Seedster.configuration.ssh_host,
-      remote_host_path: Seedster.configuration.remote_host_path
+      remote_host_path: Seedster.configuration.remote_host_path,
+      disable_triggers: Seedster.configuration.disable_db_triggers
     ).load!
   end
 end

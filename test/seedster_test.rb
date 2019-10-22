@@ -25,7 +25,7 @@ class SeedsterTest < Minitest::Test
 
   def test_that_it_has_a_version_number
     refute_nil ::Seedster::VERSION
-    assert_equal '0.1.7', ::Seedster::VERSION
+    assert_equal '0.1.8', ::Seedster::VERSION
   end
 
   def test_file_manager_has_a_dump_dir
@@ -67,7 +67,8 @@ class SeedsterTest < Minitest::Test
       :ssh_user,
       :ssh_host,
       :tables,
-      :skip_download
+      :skip_download,
+      :disable_db_triggers
     ].each do |option|
       assert configuration.respond_to?(option)
     end
