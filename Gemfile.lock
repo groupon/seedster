@@ -1,21 +1,21 @@
 PATH
   remote: .
   specs:
-    seedster (0.1.6)
+    seedster (0.1.7)
 
 GEM
   remote: https://rubygems.org/
   specs:
     minitest (5.11.3)
-    rake (10.5.0)
+    rake (12.3.3)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  bundler (~> 1.16)
+  bundler (~> 2)
   minitest (~> 5.0)
-  rake (~> 10.0)
+  rake (~> 12)
   seedster!
 
 BUNDLED WITH
